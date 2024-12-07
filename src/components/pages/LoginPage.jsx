@@ -10,7 +10,7 @@ const LoginPage = () => {
   const handleLogin = () => {
     if (username === "user" && password === "password") {
       localStorage.setItem("isAuthenticated", "true");
-      navigate("/dashboard");
+      navigate("/profile-overview");
     } else {
       alert("Invalid credentials!");
     }
