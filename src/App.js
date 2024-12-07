@@ -6,7 +6,6 @@ import DashboardPage from "./components/DashboardPage";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 
 const App = () => {
-  console.log('hii')
   return (
     <Router>
       <Routes>
