@@ -4,7 +4,7 @@ import {
   CircularProgress
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import InfoDetails from '../profileOverview/InfoDetails';
+import EmpDetails from '../profileOverview/EmpDetails';
 
 // Define makeStyles for custom styling
 const useStyles = makeStyles({
@@ -85,16 +85,16 @@ const EmployeeDetails = () => {
   return (
     <Box className={classes.container}>
       {/* Work Role Section */}
-      <InfoDetails title={'Work Role'} details={customer.workflow[0]} />
+      <EmpDetails title={'Work Role'} details={customer.workflow} />
 
       {/* Current Office Location Section */}
-      <InfoDetails title={'Current Office Location'} details={customer.officeLocation[0]} />
+      <EmpDetails title={'Current Office Location'} details={customer.officeLocation} />
 
       {/* Manager Section */}
-      <InfoDetails title={'Manager'} details={customer.manager[0]} />
+      <EmpDetails title={'Manager'} details={customer.manager} />
 
       {/* Employee Type Section */}
-      <InfoDetails title={'Employee Type'} details={customer.employeeType[0]} />
+      <EmpDetails title={'Employee Type'} details={customer.employeeType} />
 
     </Box>
   );

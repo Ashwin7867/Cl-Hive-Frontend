@@ -17,9 +17,8 @@ const useStyles = makeStyles({
   },
   node: {
     padding: "10px",
-    border: "1px solid #555",
     borderRadius: "8px",
-    backgroundColor: "#f7ebff",
+    background: 'linear-gradient(120deg, #ffdffe, #ddaefc)',
     textAlign: "center",
     minWidth: "120px",
   },
