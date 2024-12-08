@@ -6,6 +6,7 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import InfoDetails from '../profileOverview/InfoDetails';
+import FlowchartTree from '../common/FlowchartTree';
 
 // Define makeStyles for custom styling
 const useStyles = makeStyles({
@@ -24,7 +25,8 @@ const useStyles = makeStyles({
   }
 });
 
-const customer = {
+// Sample objects
+const customerObj = {
   overview: {
     "Employee ID": "CL2494",
     "Department": "Technology",
@@ -57,15 +59,31 @@ const customer = {
   }
 };
 
+const flowchartobj = {
+  level3: [
+    { name: "sagar", role: "SE1", department: "Technology" },
+    { name: "mrunal", role: "SSE1", department: "Technology" },
+    { name: "kshitij", role: "SSE1", department: "Technology" },
+    { name: "Sakshi", role: "SSE1", department: "Technology" },
+    { name: "ashwini", role: "SE2", department: "Technology" },
+    { name: "Nowfal", role: "SE2", department: "Technology" },
+  ],
+  level2: { name: "Joseph C", role: "manager", department: "Technology" },
+  level1: { name: "Annie", role: "senior manager", department: "Technology" },
+  level0: { name: "Guru G", role: "CTO", department: "Technology" },
+};
+
 // The ProfileOverview component
 const ProfileOverview = () => {
   const classes = useStyles();
   const [loading, setLoading] = useState(true);
+  const [customer, setCustomer] = useState({});
 
   // Simulate API loading with a timeout
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
+      setCustomer(customerObj)
     }, 1000); // Simulate API delay
   }, []);
 
@@ -98,6 +116,7 @@ const ProfileOverview = () => {
         <Typography variant="h5" style={{ marginBottom: "8px" }}>
           {'Organization Chart'}
         </Typography>
+        <FlowchartTree flowchartobj={flowchartobj} />
       </Box>
     </Box>
   );

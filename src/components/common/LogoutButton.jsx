@@ -13,6 +13,8 @@ const useStyles = makeStyles({
       border: "none",
       padding: "8px 16px",
       borderRadius: "4px",
+      width: '-webkit-fill-available',
+      right: '16px',
       "&:hover": {
         backgroundColor: "#b299d0",
       },
