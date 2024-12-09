@@ -136,6 +136,7 @@ const useStyles = makeStyles({
 
 const App = () => {
   const classes = useStyles();
+  const empData = JSON.parse(localStorage.getItem("userData"));
 
   const menuItems = [
     {
@@ -199,11 +200,11 @@ const App = () => {
                       <Avatar className={classes.employeeIcon}>
                         <FaUser />
                       </Avatar>
-                      <div className={classes.employeeDetails}>John Doe</div>
-                      <div className={classes.employeeDetails}>Senior Developer</div>
-                      <div className={classes.employeeDetails}>Engineering</div>
-                      <div className={classes.employeeDetails}>ID: 12345</div>
-                      <div className={classes.employeeDetails}>john.doe@example.com</div>
+                      <div className={classes.employeeDetails}>{empData.name}</div>
+                      <div className={classes.employeeDetails}>{empData.role}</div>
+                      <div className={classes.employeeDetails}>{empData.department}</div>
+                      <div className={classes.employeeDetails}>{empData.emp_code}</div>
+                      <div className={classes.employeeDetails}>{empData.email}</div>
                     </Box>
                     <Divider className={classes.menuGap} />
                     {/* Menu Items */}

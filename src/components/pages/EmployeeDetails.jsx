@@ -24,37 +24,37 @@ const useStyles = makeStyles({
   }
 });
 
-const customerObj = {
-  workflow:[{
-    "Group Company": "CaratLane",
-    "Designation": "Software Engineer - II",
-    "Department": "Technology",
-    "Band": "N.A.",
-    "Band Code": "N.A.",
-    "Grade": "N.A.",
-    "Grade Code": "N.A.",
-    "From-To": "18-11-2022 - Present",
-  }],
-  officeLocation:[{
-    "Country": "India",
-    "State": "Maharashtra",
-    "City": "Mumbai",
-    "From-To": "18-11-2022 - Present",
-  }],
-  manager:[{
-    "Manager Name": "Ajay Paul (CL1266)",
-    "From-To": "18-11-2022 - 05-05-2024"
-  }, 
-  {
-    "Manager Name": "Joseph C (CL0989)",
-    "From-To": "06-05-2024 - Present",
-  }],
-  employeeType:[{
-    "Employee Type": "Full Time Employee (FTE)",
-    "Employee Sub Type": "Executive",
-    "From-To": "18-11-2022 - Present",
-  }],
-};
+// const customerObj = {
+//   workflow:[{
+//     "Group Company": "CaratLane",
+//     "Designation": "Software Engineer - II",
+//     "Department": "Technology",
+//     "Band": "N.A.",
+//     "Band Code": "N.A.",
+//     "Grade": "N.A.",
+//     "Grade Code": "N.A.",
+//     "From-To": "18-11-2022 - Present",
+//   }],
+//   officeLocation:[{
+//     "Country": "India",
+//     "State": "Maharashtra",
+//     "City": "Mumbai",
+//     "From-To": "18-11-2022 - Present",
+//   }],
+//   manager:[{
+//     "Manager Name": "Ajay Paul (CL1266)",
+//     "From-To": "18-11-2022 - 05-05-2024"
+//   }, 
+//   {
+//     "Manager Name": "Joseph C (CL0989)",
+//     "From-To": "06-05-2024 - Present",
+//   }],
+//   employeeType:[{
+//     "Employee Type": "Full Time Employee (FTE)",
+//     "Employee Sub Type": "Executive",
+//     "From-To": "18-11-2022 - Present",
+//   }],
+// };
 
 // The EmployeeDetails component
 const EmployeeDetails = () => {
