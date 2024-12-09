@@ -77,13 +77,13 @@ const useStyles = makeStyles({
 });
 
 const teamMates = [
-  { empId: "E001", empName: "Alice Johnson" },
-  { empId: "E002", empName: "Bob Smith" },
-  { empId: "E003", empName: "Charlie Davis" },
+  { empId: "6756ec31c36abb150a546548", empName: "Mrunal Nalawade" },
+  { empId: "6756ecc8c36abb150a54654c", empName: "Ashwin Ghagre" },
+  { empId: "6756edfdc36abb150a54654f", empName: "Rohan Kadam" },
 ];
 
 const teamMemberMap = {
-  E001: [
+  '6756ec31c36abb150a546548': [
     {
       _id: "id1",
       title: "Business Bullseye",
@@ -119,7 +119,7 @@ const teamMemberMap = {
       selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
     }
   ],
-  E002: [
+  '6756edfdc36abb150a54654f': [
     {
       _id: "id1",
       title: "Business Bullseye",
@@ -155,7 +155,7 @@ const teamMemberMap = {
       selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
     }
   ],
-  E003: [
+  '6756ecc8c36abb150a54654c': [
     {
       _id: "id1",
       title: "Business Bullseye",
