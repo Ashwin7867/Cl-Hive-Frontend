@@ -1,6 +1,16 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { CssBaseline, Drawer, List, ListItem, ListItemText, Box, Avatar, Divider } from "@mui/material";
+import {
+  CssBaseline,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+  Box,
+  Avatar,
+  Divider,
+  TextField,
+} from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import LoginPage from "./components/pages/LoginPage";
@@ -27,7 +37,7 @@ const theme = createTheme({
       main: "#fce4ec", // Light pastel pink
     },
     text: {
-      primary: "#4a4a4a", 
+      primary: "#4a4a4a",
     },
     background: {
       default: "#fafafa",
@@ -50,6 +60,22 @@ const useStyles = makeStyles({
       color: "#4a4a4a",
     },
   },
+  searchBarContainer: {
+    display: "flex",
+    alignItems: "center",
+    backgroundColor: '#e8eaf6',
+    position: 'sticky',
+    top: '0',
+    display: 'flex'
+  },
+  searchBar: {
+    flexGrow: 1,
+    "& .MuiInputBase-root": {
+      width: '40%',
+      margin: '16px',
+      borderRadius: '16px',
+      alignSelf: 'center'    },
+  },
   employeeSection: {
     padding: "16px",
     textAlign: "center",
@@ -61,7 +87,7 @@ const useStyles = makeStyles({
     width: "64px",
     height: "64px",
     marginBottom: "8px",
-    margin:'auto'
+    margin: "auto",
   },
   employeeDetails: {
     fontSize: "14px",
@@ -103,6 +129,9 @@ const useStyles = makeStyles({
       backgroundColor: "#fce4ec",
     },
   },
+  rightArea:{
+    width: '-webkit-fill-available'
+  }
 });
 
 const App = () => {
@@ -206,10 +235,22 @@ const App = () => {
                     {/* Logout Button */}
                     <LogoutButton />
                   </Drawer>
-                  {/* Main Content */}
-                  <Box className={classes.mainContent}>
-                    <Routes>{renderNestedRoutes()}</Routes>
+                  <Box className={classes.rightArea}>
+                    {/* Search Bar */}
+                    <Box className={classes.searchBarContainer}>
+                      <TextField
+                        variant="outlined"
+                        placeholder="Employee Search..."
+                        fullWidth
+                        className={classes.searchBar}
+                      />
+                    </Box>
+                    {/* Main Content */}
+                    <Box className={classes.mainContent}>
+                      <Routes>{renderNestedRoutes()}</Routes>
+                    </Box>
                   </Box>
+
                 </Box>
               </ProtectedRoute>
             }
