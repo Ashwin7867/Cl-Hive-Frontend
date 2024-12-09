@@ -79,7 +79,7 @@ const useStyles = makeStyles({
 const teamMates = [
   { empId: "E001", empName: "Alice Johnson" },
   { empId: "E002", empName: "Bob Smith" },
-  { empId: "E003", empName: "Charlie Davis" }
+  { empId: "E003", empName: "Charlie Davis" },
 ];
 
 const teamMemberMap = {
@@ -251,25 +251,27 @@ const ManagerReview = () => {
         response.managerRating !== "" &&
         response.managerReviewText?.trim()?.length > 0
     );
-
+  
     if (!isValid) {
       alert("Please fill out all fields before submitting.");
       return;
     }
-
-    const submissionData = responses.map((response) => ({
+  
+    const submissionData = {
       empId: selectedEmployee,
       empName: teamMates.find((mate) => mate.empId === selectedEmployee)?.empName,
-      title: response.title,
-      target: response.target,
-      selfRating: response.selfRating,
-      selfReviewText: response.selfReviewText,
-      managerRating: response.managerRating,
-      managerReviewText: response.managerReviewText,
-    }));
-
+      reviews: responses.map((response) => ({
+        title: response.title,
+        selfRating: response.selfRating,
+        selfReviewText: response.selfReviewText,
+        managerRating: response.managerRating,
+        managerReviewText: response.managerReviewText,
+      })),
+    };
+  
     console.log("Submitted data:", submissionData);
   };
+  
 
   return (
     <>
@@ -305,11 +307,13 @@ const ManagerReview = () => {
             </Button>
             <Collapse in={openRows[index]}>
               <Box className={classes.collapseContent}>
-                {/* Target */}
-                <Box className={classes.targetArea}>
-                  <Radar />
-                  <Typography>{response.target}</Typography>
-                </Box>
+                {/* Show Target if not Overview */}
+                {response.title !== "Overview" && (
+                  <Box className={classes.targetArea}>
+                    <Radar />
+                    <Typography>{response.target}</Typography>
+                  </Box>
+                )}
 
                 {/* Display Self Rating and Review */}
                 <Box className={classes.readOnlyField}>
