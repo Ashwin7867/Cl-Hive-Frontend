@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { Box, Typography, Collapse, Button, Tabs, Tab } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Typography, Collapse, Button, Tabs, Tab, CircularProgress } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-
+import api from "../../utils/apiService";
 import StepProgress from "../common/StepProgress";
 
 const useStyles = makeStyles({
@@ -78,6 +78,7 @@ const useStyles = makeStyles({
 
 // Rating mapping
 const ratingMap = {
+  0: "not Filled",
   1: "Need Improvement",
   2: "Below Expectations",
   3: "Met All Expectations",
@@ -139,8 +140,36 @@ const Appraisal = () => {
   const classes = useStyles();
   
   // Set the first row open by default
+  const [loading, setLoading] = useState(true);
   const [openRows, setOpenRows] = useState({ 0: true });
   const [selectedTab, setSelectedTab] = useState({});
+  const [goals, setGoals] = useState({});
+  const empData = JSON.parse(localStorage.getItem("userData"));
+
+  // Fetch data from the API
+  async function fetchAppraisal() {
+    if (!empData || !empData._id) {
+      console.warn("Employee data is missing or invalid.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const API_URL = `api/goals/quarter/fetch/${empData._id}/2024`;
+      const response = await api.post(API_URL);
+
+      setGoals(response.data?.goals);
+    } catch (error) {
+      console.error("Error fetching employee details:", error.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Trigger the effect only when `empData._id` changes
+  useEffect(() => {
+    fetchAppraisal();
+  }, [empData?._id]);
 
   const toggleRow = (index) => {
     setOpenRows((prev) => ({ ...prev, [index]: !prev[index] }));
@@ -149,6 +178,19 @@ const Appraisal = () => {
   const handleTabChange = (index, tab) => {
     setSelectedTab((prev) => ({ ...prev, [index]: tab }));
   };
+
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box>
