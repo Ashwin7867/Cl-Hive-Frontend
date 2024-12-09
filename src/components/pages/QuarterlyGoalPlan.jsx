@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -12,6 +12,8 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Radar } from "@mui/icons-material";
+import ExpandLessRoundedIcon from '@mui/icons-material/ExpandLessRounded';
+import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 
 const useStyles = makeStyles({
   container: {
@@ -20,7 +22,7 @@ const useStyles = makeStyles({
     padding: "16px",
   },
   lowerBox: {
-    backgroundColor: "#f3f3f3",
+    backgroundColor: "#F8F8F8",
     padding: "16px",
     marginTop: "16px",
     borderRadius: "8px",
@@ -29,7 +31,7 @@ const useStyles = makeStyles({
     width: "250px",
   },
   row: {
-    marginBottom: "16px",
+    marginBottom: "40px",
   },
   button: {
     display: "flex",
@@ -55,8 +57,8 @@ const useStyles = makeStyles({
   targetArea: {
     display: "flex",
     alignItems: "center",
-    backgroundColor: "#e0f7fa",
-    padding: "8px",
+    // backgroundColor: "#e0f7fa",
+    padding: "2px",
     borderRadius: "4px",
     marginBottom: "8px",
   },
@@ -76,214 +78,169 @@ const useStyles = makeStyles({
   },
 });
 
-const teamMates = [
-  { empId: "E001", empName: "Alice Johnson" },
-  { empId: "E002", empName: "Bob Smith" },
-  { empId: "E003", empName: "Charlie Davis" }
+const goalDescription = ["This is the predefined goal 1", "This is the predefined goal 2", "This is the predefined goal 3", "This is the predefined goal 4" ]
+
+const testYearlyGoals = [
+    {
+      _id: "id1",
+      title: "Business Bullseye",
+      target: "Predefined goals text is this",
+      selfRating: 3,
+      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
+      isOpen: true,
+      goalDescription: goalDescription,
+      quarterlyGoalText: "" 
+    },
+    {
+      _id: "id2",
+      title: "Functional Excellence",
+      target: "Predefined goals text is this",
+      selfRating: 4,
+      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
+      isOpen: true,
+      goalDescription: goalDescription,
+      quarterlyGoalText: "" 
+    },
+    {
+      _id: "id3",
+      title: "Change The Game",
+      target: "Predefined goals text is this",
+      selfRating: 3,
+      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
+      isOpen: true,
+      goalDescription: goalDescription,
+      quarterlyGoalText: "" 
+    },
+    {
+      _id: "id4",
+      title: "All About People/Individual Excellence",
+      target: "Predefined goals text is this",
+      selfRating: 4,
+      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
+      isOpen: true,
+      goalDescription: goalDescription,
+      quarterlyGoalText: "" 
+    },
+    {
+      _id: "id5",
+      title: "Overview",
+      selfRating: 4,
+      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
+      isOpen: true,
+      goalDescription: goalDescription,
+      quarterlyGoalText: "" 
+    }
 ];
 
-const teamMemberMap = {
-  E001: [
-    {
-      _id: "id1",
-      title: "Business Bullseye",
-      target: "Predefined goals text is this",
-      selfRating: 3,
-      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
-    },
-    {
-      _id: "id2",
-      title: "Functional Excellence",
-      target: "Predefined goals text is this",
-      selfRating: 4,
-      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
-    },
-    {
-      _id: "id3",
-      title: "Change The Game",
-      target: "Predefined goals text is this",
-      selfRating: 3,
-      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
-    },
-    {
-      _id: "id4",
-      title: "All About People/Individual Excellence",
-      target: "Predefined goals text is this",
-      selfRating: 4,
-      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
-    },
-    {
-      _id: "id5",
-      title: "Overview",
-      selfRating: 4,
-      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
-    }
-  ],
-  E002: [
-    {
-      _id: "id1",
-      title: "Business Bullseye",
-      target: "Predefined goals text is this",
-      selfRating: 3,
-      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
-    },
-    {
-      _id: "id2",
-      title: "Functional Excellence",
-      target: "Predefined goals text is this",
-      selfRating: 4,
-      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
-    },
-    {
-      _id: "id3",
-      title: "Change The Game",
-      target: "Predefined goals text is this",
-      selfRating: 3,
-      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
-    },
-    {
-      _id: "id4",
-      title: "All About People/Individual Excellence",
-      target: "Predefined goals text is this",
-      selfRating: 4,
-      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
-    },
-    {
-      _id: "id5",
-      title: "Overview",
-      selfRating: 4,
-      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
-    }
-  ],
-  E003: [
-    {
-      _id: "id1",
-      title: "Business Bullseye",
-      target: "Predefined goals text is this",
-      selfRating: 3,
-      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
-    },
-    {
-      _id: "id2",
-      title: "Functional Excellence",
-      target: "Predefined goals text is this",
-      selfRating: 4,
-      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
-    },
-    {
-      _id: "id3",
-      title: "Change The Game",
-      target: "Predefined goals text is this",
-      selfRating: 3,
-      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
-    },
-    {
-      _id: "id4",
-      title: "All About People/Individual Excellence",
-      target: "Predefined goals text is this",
-      selfRating: 4,
-      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
-    },
-    {
-      _id: "id5",
-      title: "Overview",
-      selfRating: 4,
-      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
-    }
-  ],
-};
-
-const ratingOptions = [
-  { value: 1, label: "Need Improvement" },
-  { value: 2, label: "Below Expectations" },
-  { value: 3, label: "Met All Expectations" },
-  { value: 4, label: "Exceeded Some Expectations" },
-  { value: 5, label: "Highly Exceeded Expectations" },
+const years = [
+  { id: "1", title: "F.Y 2021-2022" },
+  { id: "2", title: "F.Y 2022-2023" },
+  { id: "3", title: "F.Y 2023-2024" },
+  { id: "4", title: "F.Y 2024-2025" },
 ];
 
-const ManagerReview = () => {
+const quarters = [
+  { id: "1", title: "Quarter 1" },
+  { id: "2", title: "Quarter 2" },
+  { id: "3", title: "Quarter 3" },
+  { id: "4", title: "Quarter 4" },
+]
+
+const QuarterlyGoalPlan = () => {
   const classes = useStyles();
-  const [selectedEmployee, setSelectedEmployee] = useState("");
-  const [responses, setResponses] = useState([]);
-  const [openRows, setOpenRows] = useState({});
 
-  const handleEmployeeChange = (e) => {
-    const empId = e.target.value;
-    setSelectedEmployee(empId);
+  const [yearlyGoals, setYearlyGoals] = useState([]);
+  const [fyYearData, setFyYearData] = useState({
+    years: years,
+    selectedYear: ""
+  });
+  const [quarterData, setQuarterData] = useState({
+    quarters: quarters,
+    selectedQuarter: ""
+  });
 
-    if (teamMemberMap[empId]) {
-      setResponses(
-        teamMemberMap[empId].map((response) => ({
-          ...response,
-          managerRating: "",
-          managerReviewText: "",
-        }))
-      );
-      setOpenRows({}); // Reset collapsible rows
-    } else {
-      setResponses([]);
-    }
-  };
+  useEffect(() => {
+    setYearlyGoals(testYearlyGoals)
+  }, [])
 
-  const toggleRow = (index) => {
-    setOpenRows((prev) => ({ ...prev, [index]: !prev[index] }));
-  };
+  const toggleRow = (id) => {
+    console.log("In toggle", id)
+    setYearlyGoals((prevState) => (prevState.map((item) => item._id === id ? {...item, isOpen: !item.isOpen} : item)))
+  }
 
-  const handleManagerRatingChange = (index, value) => {
-    setResponses((prev) =>
-      prev.map((response, i) =>
-        i === index ? { ...response, managerRating: value } : response
+  const handleQuarterlyReviewTextChange = (id, value) => {
+    console.log("In querter review text", value, id);
+    setYearlyGoals((prev) =>
+      prev.map((item) =>
+        item._id === id ? { ...item, quarterlyGoalText: value } : item
       )
     );
   };
 
-  const handleManagerTextChange = (index, value) => {
-    setResponses((prev) =>
-      prev.map((response, i) =>
-        i === index ? { ...response, managerReviewText: value } : response
-      )
-    );
-  };
+  const handleYearChange = (e) => {
+    const value = e.target.value;
+    console.log("In year", value);
+
+    setFyYearData((prevState) => ({
+      ...prevState,
+      selectedYear: value
+    }))
+
+  }
+
+  const handleQuarterChange = (e) => {
+    const value = e.target.value;
+    console.log("In quarter", value);
+
+    setQuarterData((prevState) => ({
+      ...prevState,
+      selectedQuarter: value
+    }))
+  }
 
   const handleSubmit = () => {
-    const isValid = responses.every(
-      (response) =>
-        response.managerRating !== "" &&
-        response.managerReviewText?.trim()?.length > 0
-    );
+   
+    // const submissionData = responses.map((response) => ({
+    //   empId: selectedEmployee,
+    //   empName: teamMates.find((mate) => mate.empId === selectedEmployee)?.empName,
+    //   title: response.title,
+    //   target: response.target,
+    //   selfRating: response.selfRating,
+    //   selfReviewText: response.selfReviewText,
+    //   managerRating: response.managerRating,
+    //   managerReviewText: response.managerReviewText,
+    // }));
 
-    if (!isValid) {
-      alert("Please fill out all fields before submitting.");
-      return;
-    }
-
-    const submissionData = responses.map((response) => ({
-      empId: selectedEmployee,
-      empName: teamMates.find((mate) => mate.empId === selectedEmployee)?.empName,
-      title: response.title,
-      target: response.target,
-      selfRating: response.selfRating,
-      selfReviewText: response.selfReviewText,
-      managerRating: response.managerRating,
-      managerReviewText: response.managerReviewText,
-    }));
-
-    console.log("Submitted data:", submissionData);
+    // console.log("Submitted data:", submissionData);
   };
 
   return (
     <>
-      <Box className={classes.container}>
+      <Box className={classes.yearQuarterContainer}>
         <FormControl className={classes.dropdown}>
-          <InputLabel>Select Team Member</InputLabel>
+          <InputLabel>Select Financial Year</InputLabel>
           <Select
-            value={selectedEmployee}
-            onChange={handleEmployeeChange}
+            value={fyYearData.selectedYear}
+            onChange={handleYearChange}
+            label="Select Financial Year"
+          >
+            {fyYearData.years.map((item) => (
+              <MenuItem key={item.id} value={item.title}>
+                {item.title}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl className={classes.dropdown} style={{marginLeft: 20}}>
+          <InputLabel>Select Quarter</InputLabel>
+          <Select
+            value={quarterData.selectedQuarter}
+            onChange={handleQuarterChange}
             label="Select Employee"
           >
-            {teamMates.map((mate) => (
-              <MenuItem key={mate.empId} value={mate.empId}>
-                {mate.empName}
+            {quarterData.quarters.map((item) => (
+              <MenuItem key={item.id} value={item.title}>
+                {item.title}
               </MenuItem>
             ))}
           </Select>
@@ -291,60 +248,33 @@ const ManagerReview = () => {
       </Box>
 
       <Box className={classes.lowerBox}>
-        {responses.map((response, index) => (
+        {yearlyGoals.map((item, index) => (
           <Box key={index} className={classes.row}>
             <Button
               variant="contained"
-              onClick={() => toggleRow(index)}
+              onClick={() => toggleRow(item._id)}
               className={classes.button}
             >
               <Box className={classes.titleWrapper}>
-                <Typography>{response.title}</Typography>
-                <span>{openRows[index] ? "-" : "+"}</span>
+                <Typography fontSize={14} fontWeight={600} style={{width: 500}}>{item.title}</Typography>
+                <Typography fontSize={14} fontWeight={600} style={{paddingRight: 400}}>{`Weightage: 40`}</Typography>
+                <span>{item.isOpen ? <ExpandLessRoundedIcon /> : <ExpandMoreRoundedIcon />}</span>
               </Box>
             </Button>
-            <Collapse in={openRows[index]}>
+            <Collapse in={item.isOpen}>
               <Box className={classes.collapseContent}>
-                {/* Target */}
-                <Box className={classes.targetArea}>
+                {item.goalDescription.map((text) => <Box className={classes.targetArea}>
                   <Radar />
-                  <Typography>{response.target}</Typography>
-                </Box>
+                  <Typography>{text}</Typography>
+                </Box>) }
 
-                {/* Display Self Rating and Review */}
-                <Box className={classes.readOnlyField}>
-                  <Typography>
-                    <strong>Self Rating:</strong> {response.selfRating}
-                  </Typography>
-                  <Typography>
-                    <strong>Self Review:</strong> {response.selfReviewText}
-                  </Typography>
-                </Box>
-
-                {/* Manager Editable Fields */}
                 <TextField
-                  select
-                  label="Manager Rating"
-                  value={response.managerRating}
-                  onChange={(e) =>
-                    handleManagerRatingChange(index, e.target.value)
-                  }
-                  fullWidth
-                  className={classes.textField}
-                >
-                  {ratingOptions.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-                <TextField
-                  label="Manager Review"
+                  label="Enter Quarterly Goals"
                   multiline
                   rows={4}
-                  value={response.managerReviewText}
+                  value={item.quarterlyGoalText}
                   onChange={(e) =>
-                    handleManagerTextChange(index, e.target.value)
+                    handleQuarterlyReviewTextChange(item._id, e.target.value)
                   }
                   fullWidth
                   className={classes.textField}
@@ -366,4 +296,4 @@ const ManagerReview = () => {
   );
 };
 
-export default ManagerReview;
+export default QuarterlyGoalPlan;
