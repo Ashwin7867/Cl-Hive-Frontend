@@ -5,6 +5,7 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import EmpDetails from '../profileOverview/EmpDetails';
+import api from "../../utils/apiService";
 
 // Define makeStyles for custom styling
 const useStyles = makeStyles({
@@ -60,14 +61,32 @@ const EmployeeDetails = () => {
   const classes = useStyles();
   const [loading, setLoading] = useState(true);
   const [customer, setCustomer] = useState({});
+  const empData = JSON.parse(localStorage.getItem("userData"));
 
-  // Simulate API loading with a timeout
-  useEffect(() => {
-    setTimeout(() => {
+  // Fetch data from the API
+  async function fetchEmployeeDetails() {
+    if (!empData || !empData._id) {
+      console.warn("Employee data is missing or invalid.");
       setLoading(false);
-      setCustomer(customerObj)
-    }, 1000); // Simulate API delay
-  }, []);
+      return;
+    }
+
+    try {
+      const API_URL = `/api/users/detail/employee/${empData._id}`;
+      const response = await api.post(API_URL);
+
+      setCustomer(response.data?.employee);
+    } catch (error) {
+      console.error("Error fetching employee details:", error.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Trigger the effect only when `empData._id` changes
+  useEffect(() => {
+    fetchEmployeeDetails();
+  }, [empData?._id]);
 
   if (loading) {
     return (
