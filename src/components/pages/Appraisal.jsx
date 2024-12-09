@@ -132,7 +132,7 @@ const goals = [
 const steps = {
   "Self Review": true,
   "Manager Review": true,
-  Collaboration: false,
+  calibration: false,
   Acknowledge: false,
 };
 
