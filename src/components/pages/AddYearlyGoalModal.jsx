@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Dialog,
@@ -11,18 +11,70 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import useStyles from "../styles/AddYearlyGoalModal";
+import api from "../../utils/apiService";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
 });
 
+
 const AddGoalDialog = ({ open, handleClose }) => {
+
   const classes = useStyles();
+  const empData = JSON.parse(localStorage.getItem("userData"));
+  const [goalData, setGoalData] = useState({});
+
+
+useEffect(() => {
+  const defaultGoalData = {
+    name: "",
+    weightage: "",
+    description: "",
+    startDate: "2024-10-01",
+    endDate: "2024-12-31",
+    emp_id: "",
+  }
+  setGoalData(defaultGoalData)
+},[])
+
+  const handleTextChange = (key,val) => {
+    console.log("In handleTextChange", key, val)
+    setGoalData((prevState) => ({
+      ...prevState,
+      [key]: val
+    }))
+  }
+
+  const handleSubmit = async () => {
+    try{
+      const reqData = {
+        ...goalData,
+        emp_id: empData._id
+      }
+      
+      const res = await api.post("/api/goals/create", reqData);
+      console.log("Goal creation", res.data?.goal);
+
+      const resData = {
+        ...res.data?.goal,
+        startDate: res.data?.goal?.startDate ? new Date(res.data?.goal?.startDate).toISOString().split("T")[0]: "",
+        endDate: res.data?.goal?.endDate ? new Date(res.data?.goal?.endDate).toISOString().split("T")[0]: "",
+      }
+      setGoalData((prevState) => ({}))
+      handleClose(resData);
+
+    }catch(err){
+      console.log("Error: ", err.message);
+      alert(`Invalid Credentails: ${err.message}`)
+    }
+
+
+  }
 
   return (
     <Dialog
       open={open}
-      onClose={handleClose}
+      onClose={() => handleClose(null)}
       fullScreen={false}
       classes={{ paper: classes.dialogPaper }}
       TransitionComponent={Transition}
@@ -49,6 +101,8 @@ const AddGoalDialog = ({ open, handleClose }) => {
           label="Enter Goal / Key Result Area Title *"
           variant="outlined"
           className={classes.inputField}
+          value={goalData.name}
+          onChange={(e) => handleTextChange("name", e.target.value)}
         />
 
       <Typography fontSize={13} className={classes.fieldLabel} style={{margin: "20px 0px 6px 0px"}}>
@@ -61,6 +115,8 @@ const AddGoalDialog = ({ open, handleClose }) => {
           rows={4}
           variant="outlined"
           className={classes.inputField}
+          value={goalData.description}
+          onChange={(e) => handleTextChange("description", e.target.value)}
         />
 
         <Box className={classes.dateRow}>
@@ -73,6 +129,8 @@ const AddGoalDialog = ({ open, handleClose }) => {
             defaultValue="2024-04-01"
             InputLabelProps={{ shrink: true }}
             className={classes.dateInput}
+            value={goalData.startDate}
+            onChange={(e) => handleTextChange("startDate", e.target.value)}
           />
           </div>
           <div style={{display: "flex", flexDirection:"column", width: "45vh"}}>
@@ -84,6 +142,8 @@ const AddGoalDialog = ({ open, handleClose }) => {
             defaultValue="2025-03-31"
             InputLabelProps={{ shrink: true }}
             className={classes.dateInput}
+            value={goalData.endDate}
+            onChange={(e) => handleTextChange("endDate", e.target.value)}
           />
           </div>
         </Box>
@@ -93,16 +153,18 @@ const AddGoalDialog = ({ open, handleClose }) => {
         </Typography>
         <TextField
           fullWidth
-          label="Weightage % *"
+          // label="Weightage % *"
           variant="outlined"
           className={classes.inputField}
+          value={goalData.weightage}
+          onChange={(e) => handleTextChange("weightage", e.target.value)}
         />
         <Typography fontSize={10} className={classes.hintText}>
           Remaining Weightage - 0.00 (Min: 0, Max: 50)
         </Typography>
 
         <Typography fontSize={13} className={classes.fieldLabel} style={{margin: "25px 0px 6px 0px"}}>
-          Metric and Target *
+          Metric and Target 
         </Typography>
         <TextField
           fullWidth
@@ -116,7 +178,7 @@ const AddGoalDialog = ({ open, handleClose }) => {
       <Box className={classes.dialogFooter}>
         <Button
           variant="contained"
-          onClick={handleClose}
+          onClick={handleSubmit}
           className={classes.saveButton}
         >
           Save

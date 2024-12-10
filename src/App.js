@@ -34,7 +34,10 @@ const theme = createTheme({
       main: "#e8eaf6", // Light pastel purple
     },
     secondary: {
-      main: "#fce4ec", // Light pastel pink
+      main: "#0096FF", // Light pastel pink
+    },
+    tertiary: {
+      main: "#0096FF"
     },
     text: {
       primary: "#4a4a4a",
@@ -66,7 +69,7 @@ const useStyles = makeStyles({
     backgroundColor: '#e8eaf6',
     position: 'sticky',
     top: '0',
-    display: 'flex'
+    zIndex: 1000    
   },
   searchBar: {
     flexGrow: 1,
@@ -130,7 +133,7 @@ const useStyles = makeStyles({
     },
   },
   rightArea:{
-    width: '-webkit-fill-available'
+    width: '-webkit-fill-available',
   }
 });
 

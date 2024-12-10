@@ -9,11 +9,12 @@ import {
   Select,
   InputLabel,
   FormControl,
+  Switch
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { Radar } from "@mui/icons-material";
 import ExpandLessRoundedIcon from '@mui/icons-material/ExpandLessRounded';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
+import api from "../../utils/apiService";
 
 const useStyles = makeStyles({
   container: {
@@ -78,58 +79,57 @@ const useStyles = makeStyles({
   },
 });
 
-const goalDescription = ["This is the predefined goal 1", "This is the predefined goal 2", "This is the predefined goal 3", "This is the predefined goal 4" ]
+// const goalDescription = ["This is the predefined goal 1", "This is the predefined goal 2", "This is the predefined goal 3", "This is the predefined goal 4" ]
 
 const testYearlyGoals = [
-    {
-      _id: "id1",
-      title: "Business Bullseye",
-      target: "Predefined goals text is this",
-      selfRating: 3,
-      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
-      isOpen: true,
-      goalDescription: goalDescription,
-      quarterlyGoalText: "" 
-    },
-    {
-      _id: "id2",
-      title: "Functional Excellence",
-      target: "Predefined goals text is this",
-      selfRating: 4,
-      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
-      isOpen: true,
-      goalDescription: goalDescription,
-      quarterlyGoalText: "" 
-    },
-    {
-      _id: "id3",
-      title: "Change The Game",
-      target: "Predefined goals text is this",
-      selfRating: 3,
-      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
-      isOpen: true,
-      goalDescription: goalDescription,
-      quarterlyGoalText: "" 
-    },
-    {
-      _id: "id4",
-      title: "All About People/Individual Excellence",
-      target: "Predefined goals text is this",
-      selfRating: 4,
-      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
-      isOpen: true,
-      goalDescription: goalDescription,
-      quarterlyGoalText: "" 
-    },
-    {
-      _id: "id5",
-      title: "Overview",
-      selfRating: 4,
-      selfReviewText: "rgreg fnor pinrvpir pinrpnrwv",
-      isOpen: true,
-      goalDescription: goalDescription,
-      quarterlyGoalText: "" 
+  {
+    _id: "id1",
+    name: "Business Bullseye",
+    isOpen: true,
+    description: "1.Feature Development\n2.Maintaining Timelines (Estimation / Planning)\n3.Quality of Deliverables (Critical/Regression/Post Live).",
+    isEditable: true,
+    quarterGoalData: {
+      _id: "",
+      pre_goals: "",
+      quarter: ""
     }
+  },
+  {
+    _id: "id2",
+    name: "Functional Excellence",
+    isOpen: true,
+    description: "1.Feature Development\n2.Maintaining Timelines (Estimation / Planning)\n3.Quality of Deliverables (Critical/Regression/Post Live).",
+    quarterlyGoalText: "",
+    isEditable: false,
+    quarterGoalData: {}
+  },
+  {
+    _id: "id3",
+    name: "Change The Game",
+    isOpen: true,
+    description: "1.Feature Development\n2.Maintaining Timelines (Estimation / Planning)\n3.Quality of Deliverables (Critical/Regression/Post Live).",
+    quarterlyGoalText: "",
+    isEditable: false,
+    quarterGoalData: {}
+  },
+  {
+    _id: "id4",
+    name: "All About People/Individual Excellence",
+    isOpen: true,
+    description: "1.Feature Development\n2.Maintaining Timelines (Estimation / Planning)\n3.Quality of Deliverables (Critical/Regression/Post Live).",
+    quarterlyGoalText: "",
+    isEditable: false,
+    quarterGoalData: {}
+  },
+  {
+    _id: "id5",
+    name: "All About People/Individual Excellence",
+    isOpen: true,
+    description: "1.Feature Development\n2.Maintaining Timelines (Estimation / Planning)\n3.Quality of Deliverables (Critical/Regression/Post Live).",
+    quarterlyGoalText: "",
+    isEditable: false,
+    quarterGoalData: {}
+  }
 ];
 
 const years = [
@@ -140,41 +140,65 @@ const years = [
 ];
 
 const quarters = [
-  { id: "1", title: "Quarter 1" },
-  { id: "2", title: "Quarter 2" },
-  { id: "3", title: "Quarter 3" },
-  { id: "4", title: "Quarter 4" },
+  { id: "1", title: "Q1" },
+  { id: "2", title: "Q2" },
+  { id: "3", title: "Q3" },
+  { id: "4", title: "Q4" },
 ]
 
 const QuarterlyGoalPlan = () => {
   const classes = useStyles();
+  const empData = JSON.parse(localStorage.getItem("userData"));
 
   const [yearlyGoals, setYearlyGoals] = useState([]);
   const [fyYearData, setFyYearData] = useState({
     years: years,
-    selectedYear: ""
+    selectedYear: "F.Y 2024-2025"
   });
   const [quarterData, setQuarterData] = useState({
     quarters: quarters,
-    selectedQuarter: ""
+    selectedQuarter: "Q3"
   });
 
   useEffect(() => {
-    setYearlyGoals(testYearlyGoals)
+    fetchGoalDataByEmployeeId()
   }, [])
+
+  const fetchGoalDataByEmployeeId = async () => {
+    try {
+      const res = await api.post(`/api/goals/quarter/fetch/pre/${empData._id}/2024`);
+      const overAllGoalData = res.data?.yearlyGoals.map((item) => ({
+        ...item,
+        isOpen: true,
+        isEditable: item.quarterlyGoals.filter((qtr) => qtr.quarter === quarterData.selectedQuarter).length===0 ? true: false,
+        quarterlyGoals: item.quarterlyGoals.length===0 ? [{
+          pre_goals: "",
+          quarter: quarterData.selectedQuarter,
+        }] : item.quarterlyGoals.map((qtr) => ({
+          _id: qtr._id,
+          pre_goals: qtr.pre_goals,
+          quarter: qtr.quarter,
+          goals_id: qtr.goals_id
+        }))
+      }));
+      setYearlyGoals(overAllGoalData);
+    }catch(err){
+      console.log("Error: ", err.message);
+      alert(`Invalid Credentails: ${err.message}`)
+    }
+  }
 
   const toggleRow = (id) => {
     console.log("In toggle", id)
-    setYearlyGoals((prevState) => (prevState.map((item) => item._id === id ? {...item, isOpen: !item.isOpen} : item)))
+    setYearlyGoals((prevState) => (prevState.map((item) => item._id === id ? { ...item, isOpen: !item.isOpen } : item)))
   }
 
-  const handleQuarterlyReviewTextChange = (id, value) => {
-    console.log("In querter review text", value, id);
-    setYearlyGoals((prev) =>
-      prev.map((item) =>
-        item._id === id ? { ...item, quarterlyGoalText: value } : item
-      )
-    );
+  const handleQuarterlyReviewTextChange = (goal_id, value) => {
+    console.log("In querter review text", value, goal_id);
+    setYearlyGoals((prev) => prev.map((item) => item._id === goal_id ? {
+      ...item,
+      quarterlyGoals: item.quarterlyGoals.map((qtr) => qtr.quarter === quarterData.selectedQuarter ? {...qtr, pre_goals: value}: qtr),
+    }: item))
   };
 
   const handleYearChange = (e) => {
@@ -198,20 +222,47 @@ const QuarterlyGoalPlan = () => {
     }))
   }
 
-  const handleSubmit = () => {
-   
-    // const submissionData = responses.map((response) => ({
-    //   empId: selectedEmployee,
-    //   empName: teamMates.find((mate) => mate.empId === selectedEmployee)?.empName,
-    //   title: response.title,
-    //   target: response.target,
-    //   selfRating: response.selfRating,
-    //   selfReviewText: response.selfReviewText,
-    //   managerRating: response.managerRating,
-    //   managerReviewText: response.managerReviewText,
-    // }));
+  const handleEditToggleChange = (data, val) => {
+    console.log("handleEditToggleChange", data)
+    setYearlyGoals((prevState) => (prevState.map((item) => item._id === data._id ? { ...item, isEditable: val } : item)))
+  }
 
-    // console.log("Submitted data:", submissionData);
+  const handleSaveQuarterGoal = async (item) => {
+    console.log("In handle dave", item)
+    try{
+      const quarterGoalObject = item.quarterlyGoals.find((qtr) => qtr.quarter === quarterData.selectedQuarter)
+      const reqData = {
+        emp_id: empData._id,
+        pre_goals: quarterGoalObject?.pre_goals ?? "",
+        startDate: item.startDate,
+        endDate: item.endDate,
+        quarter: quarterData.selectedQuarter,
+        goals_id: item._id
+      }
+
+      if(quarterGoalObject?._id){
+        const res = await api.post(`/api/goals/quarter/update/${quarterGoalObject._id}`, reqData);
+        if(res.status===200){
+          console.log("response of the put quarter goal", res.data);
+          setYearlyGoals((prevState) => prevState.map((i) => i._id === item._id ? {...i, isEditable:false}: i));
+        }
+      }else{
+        const res = await api.post("/api/goals/quarter/create", reqData);
+        const resQuarterData = res.data.goal
+        if(res.status === 200){
+          console.log("response of the post quarter goal", res.data);
+          setYearlyGoals((prevState) => prevState.map((i) => i._id === item._id ? {
+              ...i,
+              quarterlyGoals: [...i.quarterlyGoals, {_id: resQuarterData._id, pre_goals: resQuarterData.pre_goals, quarter: resQuarterData.quarter}],
+              isEditable:false
+              }: i));
+        }
+      }
+
+    }catch(err){
+      console.log("Error: ", err.message);
+      alert(`Invalid Credentails: ${err.message}`)
+    }
   };
 
   return (
@@ -231,7 +282,7 @@ const QuarterlyGoalPlan = () => {
             ))}
           </Select>
         </FormControl>
-        <FormControl className={classes.dropdown} style={{marginLeft: 20}}>
+        <FormControl className={classes.dropdown} style={{ marginLeft: 20 }}>
           <InputLabel>Select Quarter</InputLabel>
           <Select
             value={quarterData.selectedQuarter}
@@ -256,41 +307,77 @@ const QuarterlyGoalPlan = () => {
               className={classes.button}
             >
               <Box className={classes.titleWrapper}>
-                <Typography fontSize={14} fontWeight={600} style={{width: 500}}>{item.title}</Typography>
-                <Typography fontSize={14} fontWeight={600} style={{paddingRight: 400}}>{`Weightage: 40`}</Typography>
+                <Typography fontSize={14} fontWeight={600} style={{ width: 500 }}>{item.name}</Typography>
+                <Typography fontSize={14} fontWeight={600} style={{ paddingRight: 400 }}>{`Weightage: ${item.weightage}`}</Typography>
                 <span>{item.isOpen ? <ExpandLessRoundedIcon /> : <ExpandMoreRoundedIcon />}</span>
               </Box>
             </Button>
             <Collapse in={item.isOpen}>
               <Box className={classes.collapseContent}>
-                {item.goalDescription.map((text) => <Box className={classes.targetArea}>
+                <div style={{ display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
+                  <div style={{ display: "flex", flexDirection: "column", width: 600 }}>
+                    <Typography fontSize={12} fontWeight={600} style={{ width: 500 }}>{"Goals Description / Key Performance indicator"}</Typography>
+                    <TextField
+                      id="outlined-multiline-static"
+                      multiline
+                      rows={4}
+                      value={item.description}
+                      InputProps={{
+                        readOnly: true,
+                        style: { fontSize: "12px", padding: "10px 0px 0px 10px" }
+                      }}
+                      sx={{
+                        "& .MuiInputBase-root": {
+                          backgroundColor: "#f3f3f3", // Change background color
+                        },
+                      }}
+                    />
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", margin: "10px 0px 0px 80px" }}>
+                    <Typography fontSize={14} fontWeight={600} style={{ width: 500 }}>{"Allow Editing of Quarterly Goals: "}</Typography>
+                    <Switch
+                      checked={item.isEditable}
+                      onChange={(e) => handleEditToggleChange(item, e.target.checked)}
+                      inputProps={{ 'aria-label': 'controlled' }}
+                      color="secondary"
+                    />
+                  </div>
+
+                  <div>
+                    <Button variant="contained" color="secondary" disabled={!item.isEditable}
+                    onClick={() => handleSaveQuarterGoal(item)}>Save Quarter Goal</Button>
+                  </div>
+                </div>
+                {/* {item.goalDescription.map((text) => <Box className={classes.targetArea}>
                   <Radar />
                   <Typography>{text}</Typography>
-                </Box>) }
+                </Box>) } */}
 
+                <Typography fontSize={14} fontWeight={600} style={{ width: 500, marginTop: 50 }}>{`Enter the Quarterly Goals for ${item.name}:`}</Typography>
                 <TextField
-                  label="Enter Quarterly Goals"
                   multiline
-                  rows={4}
-                  value={item.quarterlyGoalText}
+                  rows={6}
+                  value={item.quarterlyGoals?.find((qtr) => qtr.quarter === quarterData.selectedQuarter)?.pre_goals }
                   onChange={(e) =>
                     handleQuarterlyReviewTextChange(item._id, e.target.value)
                   }
                   fullWidth
                   className={classes.textField}
+                  InputProps={{
+                    readOnly: item.isEditable ? false : true,
+                    style: { fontSize: "13px", padding: "10px 0px 0px 10px" }
+                  }}
+                  sx={item.isEditable ? {} : {
+                    "& .MuiInputBase-root": {
+                      backgroundColor: "#f3f3f3", // Change background color
+                    },
+                  }}
                 />
               </Box>
             </Collapse>
           </Box>
         ))}
 
-        <Button
-          variant="contained"
-          onClick={handleSubmit}
-          className={classes.submitButton}
-        >
-          Submit
-        </Button>
       </Box>
     </>
   );

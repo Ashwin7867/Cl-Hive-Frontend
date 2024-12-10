@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import useStyles from "../styles/AddYearlyGoalModal";
+import api from "../../utils/apiService";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
@@ -20,15 +21,17 @@ const UpdateGoalDialog = ({ open, handleClose, goal }) => {
   const classes = useStyles();
 
   const [data, setData] = useState({
-    title: "",
-    weightage: 0
+    name: "",
+    weightage: 0,
+    description: "",
+    startDate: "2024-10-01",
+    endDate: "2024-12-31",
+    emp_id: "",
+    _id: ""
   })
 
   useEffect(() => {
-    setData({
-        title: goal.title,
-        weightage: goal.weightage
-    })
+    setData((prevState) => ({...prevState, ...goal}));
   },[goal])
 
   const handleChange = (key, value) => {
@@ -36,6 +39,33 @@ const UpdateGoalDialog = ({ open, handleClose, goal }) => {
         ...prevState,
         [key]: value
     }))
+  }
+
+  const handleUpdateGoal = async () => {
+    try{
+      const reqData = {
+        name: data.name,
+        weightage: data.weightage,
+        description: data.description,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        emp_id: data.emp_id
+      }
+
+      const res = await api.post(`/api/goals/update/${data._id}`, reqData);
+      console.log("goal updation", res.data?.goal);
+
+      const resData = {
+        ...res.data?.goal,
+        startDate: res.data?.goal?.startDate ? new Date(res.data?.goal?.startDate).toISOString().split("T")[0]: "",
+        endDate: res.data?.goal?.endDate ? new Date(res.data?.goal?.endDate).toISOString().split("T")[0]: "",
+      }
+      
+      handleClose(resData);
+    }catch(err){
+      console.log("Error: ", err.message);
+      alert(`Invalid Credentails: ${err.message}`)
+    }
   }
 
   return (
@@ -68,8 +98,8 @@ const UpdateGoalDialog = ({ open, handleClose, goal }) => {
         //   label="Enter Goal / Key Result Area Title *"
           variant="outlined"
           className={classes.inputField}
-          value={data?.title}
-          onChange={(e) => handleChange("title", e.target.value)}
+          value={data?.name}
+          onChange={(e) => handleChange("name", e.target.value)}
         />
 
       <Typography fontSize={13} className={classes.fieldLabel} style={{margin: "20px 0px 6px 0px"}}>
@@ -82,6 +112,8 @@ const UpdateGoalDialog = ({ open, handleClose, goal }) => {
           rows={4}
           variant="outlined"
           className={classes.inputField}
+          value={data?.description}
+          onChange={(e) => handleChange("description", e.target.value)}
         />
 
         <Box className={classes.dateRow}>
@@ -94,6 +126,8 @@ const UpdateGoalDialog = ({ open, handleClose, goal }) => {
             defaultValue="2024-04-01"
             InputLabelProps={{ shrink: true }}
             className={classes.dateInput}
+            value={data?.startDate}
+            onChange={(e) => handleChange("startDate", e.target.value)}
           />
           </div>
           <div style={{display: "flex", flexDirection:"column", width: "45vh"}}>
@@ -105,6 +139,8 @@ const UpdateGoalDialog = ({ open, handleClose, goal }) => {
             defaultValue="2025-03-31"
             InputLabelProps={{ shrink: true }}
             className={classes.dateInput}
+            value={data?.endDate}
+            onChange={(e) => handleChange("endDate", e.target.value)}
           />
           </div>
         </Box>
@@ -118,17 +154,18 @@ const UpdateGoalDialog = ({ open, handleClose, goal }) => {
           variant="outlined"
           className={classes.inputField}
           value={data?.weightage}
+          onChange={(e) => handleChange("weightage", e.target.value)}
         />
         <Typography fontSize={10} className={classes.hintText}>
           Remaining Weightage - 0.00 (Min: 0, Max: 50)
         </Typography>
 
         <Typography fontSize={13} className={classes.fieldLabel} style={{margin: "25px 0px 6px 0px"}}>
-          Metric and Target *
+          Metric and Target
         </Typography>
         <TextField
           fullWidth
-        //   label="Metric and Target *"
+        // label="Metric and Target *"
           variant="outlined"
           className={classes.inputField}
         />
@@ -138,8 +175,8 @@ const UpdateGoalDialog = ({ open, handleClose, goal }) => {
       <Box className={classes.dialogFooter}>
         <Button
           variant="contained"
-          onClick={handleClose}
           className={classes.saveButton}
+          onClick={handleUpdateGoal}
         >
           Save
         </Button>

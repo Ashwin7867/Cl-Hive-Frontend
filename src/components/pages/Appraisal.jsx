@@ -3,6 +3,7 @@ import { Box, Typography, Collapse, Button, Tabs, Tab, CircularProgress } from "
 import { makeStyles } from "@mui/styles";
 import api from "../../utils/apiService";
 import StepProgress from "../common/StepProgress";
+import zIndex from "@mui/material/styles/zIndex";
 
 const useStyles = makeStyles({
   upperBox: {
@@ -200,7 +201,7 @@ const Appraisal = () => {
       </Box>
 
       {/* Lower Box with Collapsible Rows */}
-      <Box className={classes.lowerBox}>
+      <Box className={classes.lowerBox} style={{overflow: "auto", zIndex:10}}>
         {goals.map((goal, index) => (
           <Box key={index} className={classes.row}>
             <Button

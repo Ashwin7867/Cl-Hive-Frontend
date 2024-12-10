@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -15,25 +15,40 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import useStyles from "../styles/YearlyGoalPlan";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import FlagIcon from '@mui/icons-material/Flag';
+import api from "../../utils/apiService";
 import AddYearlyGoalModal from "./AddYearlyGoalModal";
 import UpdateGoalDialog from "./UpdateYearlyGoalModal";
 
 const YearlyGoalPlan = () => {
   const classes = useStyles();
+  const empData = JSON.parse(localStorage.getItem("userData"));
 
+  const [goals, setGoals] = useState([])
   const [addGoalModal, setAddGoalModal] = useState(false);
   const [showUpdateGoal, setShowUpdateGoal] = useState({
     show: false,
     activeYearlyGoal: {}
   })
 
-  const goals = [
-    { title: "Business Bullseye", weightage: 40 },
-    { title: "Functional Excellence", weightage: 25 },
-    { title: "Change The Game", weightage: 15 },
-    { title: "All About people/Individual Excellence", weightage: 20 },
-  ];
+  useEffect(() => {
+    fetchGoalsByEmployeeAndYear();
+  },[])
+
+  const fetchGoalsByEmployeeAndYear = async () => {
+    try {
+      const res = await api.post(`/api/goals/fetch/${empData._id}/2024`);
+      setGoals(() => res.data?.goals.map((item) => ({
+        ...item,
+        startDate: item.startDate ? new Date(item.startDate).toISOString().split("T")[0]: "",
+        endDate: item.endDate ? new Date(item.endDate).toISOString().split("T")[0]: "",
+      })));
+    }catch(err){
+      console.log("Error: ", err.message);
+      alert(`Invalid Credentails: ${err.message}`)
+    }
+  }
 
   const handleUpdateGoalClick = (goal) => {
     setShowUpdateGoal((prevState) => ({
@@ -43,12 +58,36 @@ const YearlyGoalPlan = () => {
     }))
   }
 
-  const handleCloseUpdateGoal = () => {
+  const handleUpdateGoal = (goal) => {
+    console.log("handleUpdateGoal", goal);
+    setGoals((prevState) => (prevState.map((item) => item._id === goal._id ? goal : item)));
     setShowUpdateGoal((prevState) => ({
       ...prevState,
       show: false,
       activeYearlyGoal: {}
     }))
+  }
+
+  const handleDeleteGoalClick = async (goal) => {
+    try {
+      console.log("handleDeleteGoalClick", goal);
+      const res = await api.delete(`/api/goals/delete/${goal._id}`);
+      if(res.status === 200 ){
+        setGoals((prevState) => (prevState.filter((item) => item._id !== goal._id)))
+      }
+    }catch(err){
+      console.log("Error: ", err.message);
+      alert(`Invalid Credentails: ${err.message}`)
+    }
+
+  }
+
+  const handleAddGoal = (goal) => {
+    console.log("handleAddGoal", goal)
+    if(goal && goal._id){
+      setGoals((prevState) => ([...prevState, goal]));
+    }
+    setAddGoalModal(false);
   }
 
   return (
@@ -88,7 +127,7 @@ const YearlyGoalPlan = () => {
             <div style={{display: "flex", alignItems:"center"}}>
               <FlagIcon sx={{color: "blue"}} />
               <Typography variant="h6" className={classes.totalGoals}>
-                4
+                {goals.length}
               </Typography>
             </div>
             <Typography variant="body1" className={classes.summaryText}>
@@ -102,11 +141,11 @@ const YearlyGoalPlan = () => {
       </Box>
       <Box className={classes.goalPlanContainer}>
 
-        {goals.map((goal, index) => (
+        {goals.length>0 && goals.map((goal, index) => (
           <Card key={index} className={classes.goalCard}>
             <CardContent style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
               <Box className={classes.goalCardContent}>
-                <Typography className={classes.goalTitle}>{goal.title}</Typography>
+                <Typography className={classes.goalTitle}>{goal.name}</Typography>
               </Box>
               <Box>
                 <Typography className={classes.goalWeightage}>
@@ -120,10 +159,25 @@ const YearlyGoalPlan = () => {
                     <EditIcon />
                   </IconButton>
                 </Tooltip>
+                <Tooltip title="Delete" onClick={() => handleDeleteGoalClick(goal)}>
+                  <IconButton>
+                    <DeleteRoundedIcon />
+                  </IconButton>
+                </Tooltip>
               </Box>
             </CardContent>
           </Card>
         ))}
+
+        {goals.length ===0 && (
+            <Card key={0} className={classes.goalCard}>
+            <CardContent style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+              <Box className={classes.goalCardContent}>
+                <Typography className={classes.goalTitle}>{"No Goals Added"}</Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        )}
 
         <Divider className={classes.divider} />
 
@@ -147,11 +201,11 @@ const YearlyGoalPlan = () => {
       </Box>
 
       <AddYearlyGoalModal open={addGoalModal} 
-          handleClose = {() => setAddGoalModal(false)} />
+          handleClose = {(goal) => handleAddGoal(goal)} />
       
       <UpdateGoalDialog open={showUpdateGoal.show}
               goal = {showUpdateGoal.activeYearlyGoal}
-              handleClose={() => handleCloseUpdateGoal()} />
+              handleClose={(goal) => handleUpdateGoal(goal)} />
                 
     </>
   );
